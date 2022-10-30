@@ -127,3 +127,11 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Editors
+.vscode/
+
+# Project files
+SavedPages/
+VivaRealData.csv
+chromedriver
