@@ -110,6 +110,9 @@ for page in range(1,pages_number+1):
             full_price=full_price.replace('.','')
             full_price=full_price.replace('Apartirde','')
             full_price=full_price.replace('SobConsulta','-')
+            full_price=full_price.replace('/Mês','')
+            full_price=full_price.replace('Preçoabaixodomercado','')
+            full_price=full_price.replace('/Dia','')
             price.append(full_price) #Get apto's parking lot
 
             # Get Apto's condominium_fee
