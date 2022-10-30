@@ -11,6 +11,8 @@ room=[]
 bath=[]
 park=[]
 price=[]
+condominium_fee=[]
+web_page=[]
 
 # Get the number of pages to extract information
 pages_number=int(input('How many pages ? '))
@@ -33,7 +35,7 @@ except FileExistsError:
 for page in range(1,pages_number+1):
    
     # Get Link and Change page number - Edit if necessary !
-    link = 'https://www.vivareal.com.br/venda/ceara/fortaleza/?pagina='+str(page)+'#onde=BR-Ceara-NULL-Fortaleza&tipos=apartamento_residencial'
+    link = 'https://www.vivareal.com.br/aluguel/ceara/fortaleza/apartamento_residencial/?pagina='+str(page)
     
     driver.get(link)
     time.sleep(2)
@@ -47,10 +49,11 @@ for page in range(1,pages_number+1):
         outf.write(str(soup_complete_source))
 
     # Web-Scraping
-    for line in soup.findAll(class_="property-card__main-content"):
+    for line in soup.findAll(class_="property-card__content-link js-card-title"):
+        
         # Get Full Address and Neighborhood
         try:
-            full_address=line.find(class_="property-card__address js-property-card-address js-see-on-map").text.strip()
+            full_address=line.find(class_="property-card__address-container js-property-card-address js-see-on-map").text.strip()
             address.append(full_address) #Get all address
             if full_address[:3]=='Rua' or full_address[:7]=='Avenida' or full_address[:8]=='Travessa' or full_address[:7]=='Alameda':
                 neighbor_first=full_address.strip().find('-')
@@ -109,6 +112,21 @@ for page in range(1,pages_number+1):
             full_price=full_price.replace('SobConsulta','-')
             price.append(full_price) #Get apto's parking lot
 
+            # Get Apto's condominium_fee
+            full_condominium_fee=line.find(class_="js-condo-price")
+            if full_condominium_fee:
+                full_condominium_fee=full_condominium_fee.text.strip()
+                full_condominium_fee=full_condominium_fee.replace(' ','')
+                full_condominium_fee=full_condominium_fee.replace('\n','')
+                full_condominium_fee=full_condominium_fee.replace('R$','')
+                full_condominium_fee=full_condominium_fee.replace('.','')
+            else:
+                full_condominium_fee = '-'
+            condominium_fee.append(full_condominium_fee)
+
+            # Get Viva Real link url
+            web_page.append('https://www.vivareal.com.br' + line['href'])
+
         except:
             continue
             
@@ -117,7 +135,8 @@ driver.quit()
 
 # Save as a CSV file
 for i in range(0,len(neighbor)):
-    combinacao=[address[i],neighbor[i],area[i],room[i],bath[i],park[i],price[i]]
+
+    combinacao=[address[i],neighbor[i],area[i],room[i],bath[i],park[i],price[i],condominium_fee[i],web_page[i]]
     df=pd.DataFrame(combinacao)
     with open('VivaRealData.csv', 'a', encoding='utf-16', newline='') as f:
         df.transpose().to_csv(f, encoding='iso-8859-1', header=False)
