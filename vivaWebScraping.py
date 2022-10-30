@@ -135,7 +135,6 @@ driver.quit()
 
 # Save as a CSV file
 for i in range(0,len(neighbor)):
-
     combinacao=[address[i],neighbor[i],area[i],room[i],bath[i],park[i],price[i],condominium_fee[i],web_page[i]]
     df=pd.DataFrame(combinacao)
     with open('VivaRealData.csv', 'a', encoding='utf-16', newline='') as f:
